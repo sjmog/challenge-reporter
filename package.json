@@ -1,0 +1,26 @@
+{
+  "name": "challenge-reporter",
+  "version": "1.0.0",
+  "description": "Reports on Weekend Challenge submission by cohort.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjmog/challenge-reporter.git"
+  },
+  "author": "Sam Morgan (s_morgan@me.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sjmog/challenge-reporter/issues"
+  },
+  "homepage": "https://github.com/sjmog/challenge-reporter#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "@octokit/rest": "^14.0.7"
+  }
+}
