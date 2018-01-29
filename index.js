@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const request = require('request-promise');
 const octokit = require('@octokit/rest')();
+const table   = require('table').table;
 
 // Declare config //
 
@@ -28,7 +29,7 @@ async function prsFor (challenge) {
     response = await octokit.getNextPage(response)
     data = data.concat(response.data)
   }
-  return data
+  return data.map(pr => pr.user.login)
 }
 
 const submittedCount = (submitted, students) => {
@@ -39,28 +40,35 @@ const submittedCount = (submitted, students) => {
   })
 }
 
-const percentageSubmitted = (listOfListsOfStudents, pullRequesters) => {
-  return listOfListsOfStudents.map((listOfStudents) => {
-    const cohort = Object.keys(listOfStudents)[0]
-    const students = Object.values(listOfStudents)[0]
+async function printCohortRatios() {
+  let data = {}
 
-    if(students.length == 0) { return }
+  for(const challenge of CHALLENGES) {
+    const prs = await prsFor(challenge)
 
-    return {
-      [cohort]: `${ ((submittedCount(pullRequesters, students) / students.length) * 100).toFixed(1) }%`
+    for(const cohort of listOfListsOfStudents) {
+      const cohortName = Object.keys(cohort)[0]
+      const students   = Object.values(cohort)[0]
+
+      if(data[cohortName] === undefined)
+        data[cohortName] = [`${ ((submittedCount(prs, students) / students.length) * 100).toFixed(1) }%`]
+      else
+        data[cohortName].push(`${ ((submittedCount(prs, students) / students.length) * 100).toFixed(1) }%`)
     }
-  }).filter(hsh => hsh !== undefined)
-}
 
-async function printCohortRatios(challenges) {
-  for(const challenge of challenges) {
-    const pullRequests = await prsFor(challenge)
-    console.log(`===== ${challenge} =====`)
-    console.log(percentageSubmitted(listOfListsOfStudents, pullRequests.map(pr => pr.user.login)))
+    console.log(data)
   }
+
+  data = Object.entries(data).map(cohortWithResults => {
+    return [cohortWithResults[0]].concat(cohortWithResults[1])
+  })
+
+  data.unshift(['Cohort'].concat(CHALLENGES))
+
+  console.log(table(data))
 }
 
-printCohortRatios(CHALLENGES)
+printCohortRatios()
 
 const listOfListsOfStudents = [
   {"November 2013": ["gianniGG", "koomerang", "anath26", "nkeszler", "ericat", "GiacomoPatella", "HannahKnights", "kenmasco", "larahy", "MatzFan", "NisarTahir", "jamesgraham09", "TomGroombridge", "SimonWoolf", "TomShacham", "astux7", "traviagio"]}, 

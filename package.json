@@ -18,9 +18,10 @@
   },
   "homepage": "https://github.com/sjmog/challenge-reporter#readme",
   "dependencies": {
+    "@octokit/rest": "^14.0.7",
     "dotenv": "^4.0.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
-    "@octokit/rest": "^14.0.7"
+    "table": "^4.0.2"
   }
 }
